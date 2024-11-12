@@ -1,0 +1,14 @@
+defaultBaseImage: cgr.dev/chainguard/static
+defaultPlatforms:
+  - linux/amd64
+
+builds:
+  - id: bot
+    main: ./cmd/bot
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -extldflags "-static"
+      - "{{ .Env.LDFLAGS }}"
