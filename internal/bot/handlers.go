@@ -31,7 +31,9 @@ func (b *Bot) handleMessage(msg *tgbotapi.Message) {
         b.api.DeleteMessage(deleteMsg)
 
         for _, member := range *msg.NewChatMembers {
-            welcomeMsg := tgbotapi.NewMessage(msg.Chat.ID, "Добро пожаловать, в IT-ХАЗЯЕВА!"+member.FirstName+"!")
+			welcomeMsg := tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("<b>%s</b> присоединился к чату", member.FirstName))
+			welcomeMsg.ParseMode = "HTML"
+			
             b.api.Send(welcomeMsg)
         }
         return

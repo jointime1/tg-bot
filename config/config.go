@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -19,7 +20,7 @@ func GetConfig() (*Config, error) {
 
 
 	if err := godotenv.Load(); err != nil {
-		return nil, err
+		log.Printf("Error loading .env file: %v", err)
 	}
 
 	config:= &Config{
