@@ -28,7 +28,7 @@ func (b *Bot) Start()  {
 
 
 func (b *Bot) handleMessage(msg *tgbotapi.Message) {
-	fmt.Println("zxc")
+	fmt.Println(msg.Chat.ID)
 	if msg.NewChatMembers != nil {
         deleteMsg := tgbotapi.NewDeleteMessage(msg.Chat.ID, msg.MessageID)
         b.api.DeleteMessage(deleteMsg)
@@ -79,5 +79,9 @@ func authURL() string {
 
 func (b *Bot) SendStreamOnlineMessage(chatID int64) {
 	message := tgbotapi.NewMessage(chatID, "Стрим начался!")
-	b.api.Send(message)
+
+	_, err := b.api.Send(message)
+	if err != nil {
+		log.Printf("Error sending message: %v", err)
+	}
 }

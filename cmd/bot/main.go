@@ -52,7 +52,9 @@ func main() {
 
 	go func() {
 			log.Println("Запуск бота...")
+			
 			bot.Start()
+			
 	}()
 
 	userToken := <-userTokenChan
@@ -62,6 +64,8 @@ func main() {
 		log.Printf("Ошибка получения user id: %v", err)
 	}
 	fmt.Println(userID)
+
+	
 
 	// Вебсокеты
 	client := twitch.NewClient()
@@ -98,7 +102,7 @@ func main() {
 		if(message.Payload.Subscription.Type == "stream.online") {
 			//ChatId беседы, куда срать уведомлениями
 			fmt.Println(message.Payload.Subscription)
-			chatID:=4551123737
+			chatID:=-1847344728
 			bot.SendStreamOnlineMessage(int64(chatID))
 		}
 		fmt.Printf("NOTIFICATION: %s: %#v\n", message.Payload.Subscription.Type, message.Payload.Event)
