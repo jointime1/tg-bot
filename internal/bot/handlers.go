@@ -1,7 +1,9 @@
 package bot
 
 import (
+	"bot/config"
 	"fmt"
+	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -26,6 +28,7 @@ func (b *Bot) Start()  {
 
 
 func (b *Bot) handleMessage(msg *tgbotapi.Message) {
+	fmt.Println("zxc")
 	if msg.NewChatMembers != nil {
         deleteMsg := tgbotapi.NewDeleteMessage(msg.Chat.ID, msg.MessageID)
         b.api.DeleteMessage(deleteMsg)
@@ -50,20 +53,31 @@ func (b *Bot) handleMessage(msg *tgbotapi.Message) {
 		return
 	}
 
-
-
-
+	if msg.Text == "/auth" {
+		fmt.Println("auth")
+		url:= authURL()
+		authMsg := tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("<a href=\"%s\">Авторизация</a>", url))
+		authMsg.ParseMode = "HTML"
+		
+		b.api.Send(authMsg)
+	}
 }
 
-// func (b *Bot) handleUnknownCommand(msg *tgbotapi.Message) {
-// 	b.api.Send(tgbotapi.NewMessage(msg.Chat.ID, "Unknown command"))
-// }
 
+func authURL() string {
+	config, err := config.GetConfig()
+	if err != nil {
+		log.Printf("Ошибка конфигурации: %v", err)
+	}
+	fmt.Println(config.ClientId)
+    return fmt.Sprintf(
+        "https://id.twitch.tv/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=code&scope=user:read:email",
+        config.ClientId,
+        config.RedirectURI,
+    )
+}
 
-// func (b *Bot) handleTextMessage(msg *tgbotapi.Message) {
-// 	b.api.Send(tgbotapi.NewMessage(msg.Chat.ID, msg.Text))
-// }
-
-// func (b *Bot) handleStartCommand(msg *tgbotapi.Message) {
-// 	b.api.Send(tgbotapi.NewMessage(msg.Chat.ID, "Hello, "+msg.Chat.FirstName))
-// }
+func (b *Bot) SendStreamOnlineMessage(chatID int64) {
+	message := tgbotapi.NewMessage(chatID, "Стрим начался!")
+	b.api.Send(message)
+}

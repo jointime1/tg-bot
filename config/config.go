@@ -8,7 +8,11 @@ import (
 	"github.com/joho/godotenv"
 )
 type Config struct {
-	TgToken string	
+	TgToken string
+	UserId string
+	ClientSecret string
+	ClientId string
+	RedirectURI string	
 }
 
 
@@ -25,6 +29,10 @@ func GetConfig() (*Config, error) {
 
 	config:= &Config{
 		TgToken: os.Getenv("TgToken"),
+		UserId: os.Getenv("UserId"),
+		ClientSecret: os.Getenv("ClientSecret"),
+		ClientId: os.Getenv("ClientId"),
+		RedirectURI: "https://b88c-46-242-9-50.ngrok-free.app/callback",
 	}
 
 	if config.TgToken == "" {
