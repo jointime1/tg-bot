@@ -4,12 +4,23 @@ import (
 	"bot/config"
 	"bot/internal/auth"
 	"bot/internal/bot"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/joeyak/go-twitch-eventsub/v3"
 )
+
+type TwitchStreamEvent struct {
+    UserName   string `json:"user_name"`  // Имя стримера
+    Title      string `json:"title"`      // Название стрима
+    GameName   string `json:"game_name"`  // Название игры/категории
+    ViewerCount int   `json:"viewer_count"` // Количество зрителей
+    StartedAt  string `json:"started_at"` // Время начала стрима
+}
+
+
 
 func main() {
 	config, err := config.GetConfig()
@@ -102,7 +113,22 @@ func main() {
 		if(message.Payload.Subscription.Type == "stream.online") {
 			//ChatId беседы, куда срать уведомлениями
 			fmt.Println(message.Payload.Subscription)
-			chatID:=-1847344728
+			var event TwitchStreamEvent
+			err := json.Unmarshal([]byte(*message.Payload.Event), &event)
+				if err != nil {
+					fmt.Printf("Ошибка при разборе данных стрима: %v\n", err)
+					return
+				}
+
+			broadcasterName := event.UserName        // Имя стримера
+			streamTitle := event.Title               // Название стрима
+			streamCategory := event.GameName        // Категория игры, в которую играет стример
+			streamViewerCount := event.ViewerCount  // Количество зрителей
+			streamStartTime := event.StartedAt 
+
+			fmt.Printf("%s: %s, %s, %d, %s\n", broadcasterName, streamTitle, streamCategory, streamViewerCount, streamStartTime)
+			
+			chatID:=-4551123737
 			bot.SendStreamOnlineMessage(int64(chatID))
 		}
 		fmt.Printf("NOTIFICATION: %s: %#v\n", message.Payload.Subscription.Type, message.Payload.Event)
